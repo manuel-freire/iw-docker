@@ -2,10 +2,9 @@
 
 Esta imagen de Docker incluye Java 8, maven y git ya configurados y listos para usar, y adminte además acceso SSH (con contraseña) para realizar tareas de administración. Está construida a partir del Dockerfile de java/lamp y adaptada para su uso en la Facultad de Informática de la FDI.
 
-El servidor está basado en Ubuntu 18.04 (LTS), y todo el software se instala a partir de los repositorios de Ubuntu.
+El servidor está basado en Debian 9 (stretch), y todo el software se instala a partir de los repositorios de Debian.
 
-La imagen únicamente expone los puertos 80 y 22 (para acceder a otros puertos, se pueden establecer túneles SSH).
-
+La imagen únicamente expone los puertos 22, 8080 y 9001 (para acceder a SSH, un servidor Tomcat típico, y HSQLDB, respectivamente).
 
 ## Instrucciones para lanzar el contenedor
 
@@ -13,14 +12,23 @@ Al lanzar el contenedor sin instrucciones adicionales se configuran todos los se
 
 Es posible configurar el acceso ssh al crear el contenedor:
 
-* -e USER_NAME=X
-* -e USER_PASS=X
+* `-e USER_NAME=X` (usa X como username)
+* `-e USER_PASS=Y` (usa Y como contraseña)
+* `-p "127.0.0.1:2222:22"` (expone el puerto ssh del contenedor sólo a tu máquina local, y en tu puerto 2222)
 
 Ejemplo:
 
 ```
-docker run -d --name=MiContenedor -e USER_NAME=juan -e USER_PASS=secreto123 mfreire/iw-docker
+docker run -d --name=MiContenedor -p "127.0.0.1:2222:22" -e USER_NAME=juan -e USER_PASS=secreto123 mfreire/iw-docker
 ```
+
+... y el servidor quedaría accesible vía ssh a través de 
+
+```
+ssh -p 2222 juan@127.0.0.1
+```
+
+... con contraseña `secreto123`
 
 ## Instrucciones de uso
 
