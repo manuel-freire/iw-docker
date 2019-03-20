@@ -1,6 +1,10 @@
 FROM openjdk:8-jdk
 
-MAINTAINER Manuel Freire <manuel.freire@fdi.ucm.es>
+ARG VCS_REF
+
+LABEL maintainer="Manuel Freire <manuel.freire@fdi.ucm.es>" \
+  org.label-schema.vcs-ref=$VCS_REF \
+  org.label-schema.vcs-url="https://github.com/manuel-freire/iw-docker"
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -19,20 +23,24 @@ RUN mkdir /opt/maven \
 
 # drop privileges and prime maven
 ENV USER_NAME="user" \
-  USER_PASS="pass"
+  USER_PASS="pass" \
   WORK_DIR="/app"
 RUN mkdir ${WORK_DIR} \
+  && mkdir ${WORK_DIR}/.m2 \
   && groupadd -r ${USER_NAME} \
   && useradd -r -d ${WORK_DIR} -g ${USER_NAME} ${USER_NAME} \
   && chown -R ${USER_NAME}:${USER_NAME} ${WORK_DIR}
+# see https://stackoverflow.com/a/53016532/15472
+COPY settings.xml ${WORK_DIR}/.m2
 RUN mkdir /var/run/sshd \
-  && echo ${USER_NAME}:${USER_PASS} | chpasswd \
+  && echo "${USER_NAME}:${USER_PASS}" | chpasswd \
   && sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' \
     -i /etc/pam.d/sshd
 USER ${USER_NAME}
 WORKDIR ${WORK_DIR}
 
 RUN git clone https://github.com/manuel-freire/iw1819
+
 RUN cd iw1819 \
   && mvn package \
   && cd ${WORK_DIR}
