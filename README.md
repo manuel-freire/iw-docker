@@ -19,7 +19,7 @@ También es posible configurar qué puertos estarán disponibles al lanzarlo con
 Ejemplo:
 
 ```
-docker run -d --name=MiContenedor -p "127.0.0.1:2222:22" -p 8080:8080 -p "127.0.0.1:9001:9001" -e USER_NAME=juan -e USER_PASS=secreto123 mfreire/iw-docker
+docker run -d --name=MiContenedor -p "127.0.0.1:2222:22" -p 8080:8080 -p "127.0.0.1:9001:9001" mfreire/iw-docker
 ```
 
 ... y el servidor quedaría accesible vía ssh a través de 
