@@ -10,10 +10,8 @@ La imagen únicamente expone los puertos 22, 8080 y 9001 (para acceder a SSH, un
 
 Al lanzar el contenedor sin instrucciones adicionales se configuran todos los servicios, incluyendo un password por defecto (user:pass) para acceso vía SSH.
 
-Es posible configurar el acceso ssh al crear el contenedor:
+También es posible configurar qué puertos estarán disponibles al lanzarlo con run
 
-* `-e USER_NAME=X` (usa X como username)
-* `-e USER_PASS=Y` (usa Y como contraseña)
 * `-p "127.0.0.1:2222:22"` (expone el puerto ssh del contenedor sólo a tu máquina local, y en tu puerto 2222)
 * `-p 8080:8080` (expone el puerto 8080 del contenedor en tu puerto 8080)
 * `-p "127.0.0.1:9001:9001"` (expone el puerto 9001 del contenedor, del servidor hsqldb, en tu puerto 9001, accesible sólo en tu máquina local)
