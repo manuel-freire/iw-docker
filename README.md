@@ -25,17 +25,18 @@ docker run -d --name=MiContenedor -p "127.0.0.1:2222:22" -p 8080:8080 -p "127.0.
 ... y el servidor quedaría accesible vía ssh a través de 
 
 ```
-ssh -p 2222 juan@127.0.0.1
+ssh -p 2222 user@127.0.0.1
 ```
 
-... con contraseña `secreto123`
+... con contraseña `pass`. Cámbiala tras arrancarlo usando `passwd`
 
 ## Instrucciones de uso
 
 En el momento de lanzar el contenedor, se activan los siguientes servicios y funciones:
 
 * Servidor SSH: Se puede acceder directamente como el usuario y password elegidos al ejecutar el contenedor.
-* Subida de archivos: para subir archivos al servidor, se puede utilizar el protocolo SFTP sobre el servidor SSH.
+
+La idea es pasar el código del proyecto, vía git, scp ó sftp, al contenedor; y luego ejecutarlo allí con `mvn spring-boot:run`, lo cual permitirá acceder a la aplicación web resultante en el puerto 8080. El contenedor viene con el proyecto de plantilla pre-copiado a `/app/iw1819`, e incluye también los scripts de lanzamiento de la base de datos correspondientes.
 
 ## Licencia
 
