@@ -8,7 +8,7 @@ LABEL maintainer="Manuel Freire <manuel.freire@fdi.ucm.es>" \
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# update & cleanup
+# update, get an ssh server & git, and cleanup
 RUN apt-get update \
   && apt-get install -y openssh-server git \
   && rm -rf /var/lib/apt/lists/* \
@@ -21,36 +21,39 @@ RUN mkdir /opt/maven \
   && tar -xvzf apache-maven-3.6.0-bin.tar.gz \
   && ln -s $(pwd)/apache-maven-3.6.0/bin/mvn /usr/local/bin
 
-# drop privileges and prime maven
+# create non-root user, allow ssh access
 ENV USER_NAME="user" \
   USER_PASS="pass" \
   WORK_DIR="/app"
 RUN mkdir ${WORK_DIR} \
-  && mkdir ${WORK_DIR}/.m2 \
   && groupadd -r ${USER_NAME} \
-  && useradd -r -d ${WORK_DIR} -g ${USER_NAME} ${USER_NAME} \
-  && chown -R ${USER_NAME}:${USER_NAME} ${WORK_DIR}
-# see https://stackoverflow.com/a/53016532/15472
-COPY settings.xml ${WORK_DIR}/.m2
+  && useradd -r -d ${WORK_DIR} -g ${USER_NAME} ${USER_NAME} -s /bin/bash \
+  && chown -R ${USER_NAME}:${USER_NAME} ${WORK_DIR} \
+  && echo 'MAVEN_OPTS="-Xmx256m -XX:ErrorFile=log.log"' >> /etc/environment
 RUN mkdir /var/run/sshd \
   && echo "${USER_NAME}:${USER_PASS}" | chpasswd \
   && sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' \
     -i /etc/pam.d/sshd
+
+# drop privileges
 USER ${USER_NAME}
 WORKDIR ${WORK_DIR}
 
-RUN git clone https://github.com/manuel-freire/iw1819
+# avoid debian bug in jdk-8-181 that breaks tests
+# see https://stackoverflow.com/a/53016532/15472
+# limit memory consumption for maven
+RUN mkdir ${WORK_DIR}/.m2
+COPY settings.xml ${WORK_DIR}/.m2
 
-RUN cd iw1819 \
+# prime maven
+RUN git clone https://github.com/manuel-freire/iw1819 \
+  && cd iw1819 \
   && mvn package \
   && cd ${WORK_DIR}
 
-# limit maven's memory consumption
-ENV MAVEN_OPTS="-Xmx256m -XX:ErrorFile=log.log"
-
-# expose built-in tomcat webserver
+# expose built-in tomcat webserver (to be launched by users)
 EXPOSE 8080
-# expose hsqldb default port
+# expose hsqldb default port (to be launched by users)
 EXPOSE 9001
 
 # end by launching SSH as root
