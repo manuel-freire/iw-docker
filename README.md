@@ -15,11 +15,13 @@ Es posible configurar el acceso ssh al crear el contenedor:
 * `-e USER_NAME=X` (usa X como username)
 * `-e USER_PASS=Y` (usa Y como contraseña)
 * `-p "127.0.0.1:2222:22"` (expone el puerto ssh del contenedor sólo a tu máquina local, y en tu puerto 2222)
+* `-p 8080:8080` (expone el puerto 8080 del contenedor en tu puerto 8080)
+* `-p "127.0.0.1:9001:9001"` (expone el puerto 9001 del contenedor, del servidor hsqldb, en tu puerto 9001, accesible sólo en tu máquina local)
 
 Ejemplo:
 
 ```
-docker run -d --name=MiContenedor -p "127.0.0.1:2222:22" -e USER_NAME=juan -e USER_PASS=secreto123 mfreire/iw-docker
+docker run -d --name=MiContenedor -p "127.0.0.1:2222:22" -p 8080:8080 -p "127.0.0.1:9001:9001" -e USER_NAME=juan -e USER_PASS=secreto123 mfreire/iw-docker
 ```
 
 ... y el servidor quedaría accesible vía ssh a través de 
