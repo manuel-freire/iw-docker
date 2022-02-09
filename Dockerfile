@@ -29,7 +29,7 @@ RUN mkdir ${WORK_DIR} \
   && groupadd -r ${USER_NAME} \
   && useradd -r -d ${WORK_DIR} -g ${USER_NAME} ${USER_NAME} -s /bin/bash \
   && chown -R ${USER_NAME}:${USER_NAME} ${WORK_DIR} \
-  && echo 'MAVEN_OPTS="-Xmx256m -XX:ErrorFile=log.log"' >> /etc/environment \
+  && echo 'MAVEN_OPTS="-Xmx256m -XX:ErrorFile=log.log -XX:MaxRAM=300m"' >> /etc/environment \
   && echo 'JAVA_HOME="/usr/local/openjdk-11"' >> /etc/environment
 RUN mkdir /var/run/sshd \
   && echo "${USER_NAME}:${USER_PASS}" | chpasswd \
